@@ -20,7 +20,7 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
       const [password,setPassword] = useState('');
       const [confirmPassword,setConfirmPassword] = useState('');
   return (
-    <Card className="w-full h-full p-8">
+    <Card className="w-full mt-0 h-full p-8">
       <CardHeader className="px-0 pt-0">
         <CardTitle>Login To Continue</CardTitle>
         <CardDescription>
