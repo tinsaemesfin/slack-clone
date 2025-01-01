@@ -19,7 +19,7 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
       const [email,setEmail] = useState('');
       const [password,setPassword] = useState('');
       const [confirmPassword,setConfirmPassword] = useState('');
-// dfs
+// dfsd
       return (  
     <Card className="w-full mt-0 h-full p-8">
       <CardHeader className="px-0 pt-0">
