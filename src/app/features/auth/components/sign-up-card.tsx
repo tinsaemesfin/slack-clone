@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import React, { useState } from "react";
 
 import { SignInFlow } from "../types";
+import { useAuthActions } from "@convex-dev/auth/react";
 interface SignUpCardProps {
   setState: (state: SignInFlow) => void;
 }
@@ -18,8 +19,25 @@ interface SignUpCardProps {
 const SignUpCard = ({ setState }: SignUpCardProps) => {
       const [email,setEmail] = useState('');
       const [password,setPassword] = useState('');
+      const [name,setName] = useState('');
       const [confirmPassword,setConfirmPassword] = useState('');
-// dfsd
+      const [pending,setPending] = useState(false);
+    const [error,setError] = useState('');
+      const {signIn} = useAuthActions();
+    
+   
+    const onPasswordSignup=(e:React.FormEvent<HTMLFormElement>)=>{
+    e.preventDefault();
+    if(password !== confirmPassword){
+      setError('Passwords do not match');
+      return;
+    }
+    setPending(true);
+    signIn('password',{name,email,password,flow:'signUp'}).catch(()=>{
+      setError('Invalid email or password');
+    }).finally(()=>setPending(false));
+  }
+
       return (  
     <Card className="w-full mt-0 h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -28,22 +46,31 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
           Use your enable or another service to continue
         </CardDescription>
       </CardHeader>
+      {!!error && <p className="text-red-500 text-lg">{error}</p>}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5" action="">
+        <form className="space-y-2.5" onSubmit={onPasswordSignup}>
           <Input
             type="text"
             className=" h-10 w-full p-2"
             placeholder="Email"
             required
-            disabled={false}
+            disabled={pending}
             onChange={(e)=>setEmail(e.target.value)}
+          />
+          <Input
+            type="text"
+            className=" h-10 w-full p-2"
+            placeholder="Full Name"
+            required
+            disabled={pending}
+            onChange={(e)=>setName(e.target.value)}
           />
           <Input
             type="password"
             className=" h-10 w-full p-2"
             placeholder="Password"
             required
-            disabled={false}
+            disabled={pending}
             onChange={(e)=>setPassword(e.target.value)}
           />
           <Input
@@ -51,10 +78,10 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
             className=" h-10 w-full p-2"
             placeholder="Confirm password"
             required
-            disabled={false}
+            disabled={pending}
             onChange={(e)=>setConfirmPassword(e.target.value)}
           />
-          <Button className="w-full h-10" type="submit">
+          <Button className="w-full h-10" type="submit" disabled={pending}>
             Sign Up
           </Button>
         </form>
@@ -77,3 +104,4 @@ const SignUpCard = ({ setState }: SignUpCardProps) => {
 };
 
 export default SignUpCard;
+      

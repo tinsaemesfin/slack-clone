@@ -24,8 +24,16 @@ const SignInCard = ({setState}:SignInCardProps) => {
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
     const [pending,setPending] = useState(false);
+    const [error,setError] = useState('');
     
-
+    const onPasswordSignIn = (e:React.FormEvent<HTMLFormElement>)=>{
+    
+      e.preventDefault();
+      setPending(true);
+      signIn('password',{email,password,flow:'signIn'}).catch(()=>{
+          setError('Invalid email or password');
+      }).finally(()=>setPending(false));
+    }
     const onProvider = (value:'google'|'github')=>{
       setPending(true);
       signIn(value).finally(()=>setPending(false));
@@ -38,8 +46,9 @@ const SignInCard = ({setState}:SignInCardProps) => {
         Use your enable or another service to continue
       </CardDescription>
       </CardHeader>
+      {!!error && <p className="text-red-500 text-lg">{error}</p>}
       <CardContent className="space-y-5 px-0 pb-0">
-        <form className="space-y-2.5" action="">
+        <form className="space-y-2.5" onSubmit={onPasswordSignIn}>
           <Input
             type="email"
             className=" h-10 w-full p-2"
