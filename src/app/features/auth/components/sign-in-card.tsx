@@ -12,14 +12,24 @@ import React, { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { SignInFlow } from "../types";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignInCardProps {
     setState:(state:SignInFlow)=>void;
 
 }
 const SignInCard = ({setState}:SignInCardProps) => {
+  const {signIn} = useAuthActions();
+
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
+    const [pending,setPending] = useState(false);
+    
+
+    const onProvider = (value:'google'|'github')=>{
+      setPending(true);
+      signIn(value).finally(()=>setPending(false));
+    }
   return (
     <Card className="w-full h-full p-8">
       <CardHeader className="px-0 pt-0">
@@ -35,7 +45,7 @@ const SignInCard = ({setState}:SignInCardProps) => {
             className=" h-10 w-full p-2"
             placeholder="Email"
             required
-            disabled={false}
+            disabled={pending}
             onChange={(e)=>setEmail(e.target.value)}
           />
           <Input
@@ -43,19 +53,19 @@ const SignInCard = ({setState}:SignInCardProps) => {
             className=" h-10 w-full p-2"
             placeholder="Password"
             required
-            disabled={false}
+            disabled={pending}
             onChange={(e)=>setPassword(e.target.value)}
           />
-          <Button className="w-full h-10" type="submit" disabled={email === '' || password === ''}>
+          <Button className="w-full h-10" type="submit" disabled={email === '' || password === '' || pending}>
             Sign In
           </Button>
         </form>
         <Separator />
         <div className="flex flex-col gap-y-2.5 ">
-            <Button size='lg' variant="outline" className="relative w-full  " type="button">
+            <Button disabled={pending} size='lg' variant="outline" className="relative w-full  " type="button" onClick={()=>onProvider('google')}>
                 <FcGoogle size={30} className="absolute left-3 top-3"  /> Continue with Google
             </Button>
-            <Button size='lg' variant="outline" className="relative w-full  " type="button">
+            <Button disabled={pending} size='lg' variant="outline" className="relative w-full  " type="button" onClick={()=>onProvider('github')}>
                 <FaGithub size={30} className="absolute left-3 top-3"  /> Continue with Github
             </Button>
             <p className="text-xs self-center text-muted-foreground">
